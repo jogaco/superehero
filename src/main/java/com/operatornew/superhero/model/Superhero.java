@@ -18,6 +18,13 @@ public class Superhero {
     @Column
     private LocalDate firstPublished;
 
+    public Superhero() {}
+
+    public Superhero(String name, String pseudonym) {
+        this.name = name;
+        this.pseudonym = pseudonym;
+    }
+
     public String getPseudonym() {
         return pseudonym;
     }
