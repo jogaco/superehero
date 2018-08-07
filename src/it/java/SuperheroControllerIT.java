@@ -1,13 +1,12 @@
 import com.operatornew.superhero.SuperheroApplication;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -26,8 +25,6 @@ public class SuperheroControllerIT {
     @LocalServerPort
     private int port;
 
-    private HttpHeaders headers = new HttpHeaders();
-
     @Test
     public void notFound() {
         ResponseEntity<String> response = restTemplate.getForEntity(createURLWithPort("/superheroes/blah-blah"), String.class);
@@ -36,13 +33,33 @@ public class SuperheroControllerIT {
     }
 
     @Test
-    public void found() throws Exception {
+    public void found() {
         ResponseEntity<String> response = restTemplate.getForEntity(createURLWithPort("/superheroes/spiderman"), String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         String body = response.getBody();
         assertThat(body, hasJsonPath("$.name"));
         assertThat(body, hasJsonPath("$.pseudonym"));
+        assertThat(body, hasJsonPath("$.skills[0].skill"));
+    }
+
+
+    @Test
+    public void post() {
+        String requestJson = "{\"name\":\"name1\",\"pseudonym\":\"pseudonym-test\",\"skills\":[{\"skill\":\"skill-test\"}]}";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/superheroes"),HttpMethod.POST, entity, String.class);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
+        String location = response.getHeaders().get(HttpHeaders.LOCATION).get(0);
+        assertThat(location, Matchers.matchesPattern(".*/superheroes/pseudonym-test"));
+        String body = response.getBody();
+        assertThat(body, hasJsonPath("$.name"));
+        assertThat(body, hasJsonPath("$.pseudonym"));
+        assertThat(body, hasJsonPath("$.skills"));
         assertThat(body, hasJsonPath("$.skills[0].skill"));
     }
 
