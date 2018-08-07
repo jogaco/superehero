@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -76,4 +77,18 @@ public class SuperheroControllerTest {
                 .contentType(contentType))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void all() throws Exception {
+        Superhero superhero = new Superhero("name", "pseudonym");
+        when(superheroRepository.findAll()).thenReturn(Collections.singletonList(superhero));
+
+        mockMvc.perform(get("/superheroes")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name", is(superhero.getName())))
+                .andExpect(jsonPath("$[0].pseudonym", is(superhero.getPseudonym())));
+    }
+
 }

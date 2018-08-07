@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(path="/superheroes")
@@ -26,7 +23,7 @@ public class SuperheroController {
 
     @RequestMapping(value = "/{pseudonym}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Superhero> getSuperhero(@PathVariable("pseudonym") String pseudonym) {
+    public ResponseEntity<Superhero> get(@PathVariable("pseudonym") String pseudonym) {
         HttpHeaders headers = new HttpHeaders();
         headers.add (HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
@@ -36,6 +33,15 @@ public class SuperheroController {
         } else {
             return new ResponseEntity<>(headers, HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<Iterable<Superhero>> getAll() {
+        HttpHeaders headers = new HttpHeaders();
+        Iterable<Superhero> all = superheroRepository.findAll();
+
+        return new ResponseEntity<>(all, headers, HttpStatus.OK);
     }
 
 }
