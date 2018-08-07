@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDate;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasNoJsonPath;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -22,10 +23,13 @@ public class SuperheroJsonTests {
 
     @Test
     public void testSerialize() throws Exception {
+        Superhero ally = new Superhero("ally", "ally1");
         Superhero superhero = new Superhero("name", "pseudonym");
         superhero.setFirstPublished(LocalDate.of(2018,8,7));
         superhero.setPublisher("publisher");
         superhero.addSkill(new Skill("skill1"));
+        superhero.addAlly(ally);
+
 
         String json = jsonTester.write(superhero).getJson();
         assertThat(json, hasJsonPath("$.name", equalTo("name")));
@@ -33,5 +37,7 @@ public class SuperheroJsonTests {
         assertThat(json, hasJsonPath("$.publisher", equalTo("publisher")));
         assertThat(json, hasJsonPath("$.firstPublished", equalTo("2018-08-07")));
         assertThat(json, hasJsonPath("$.skills[0].skill", equalTo("skill1")));
+        assertThat(json, hasJsonPath("$.allies[0].pseudonym", equalTo("ally1")));
+        assertThat(json, hasNoJsonPath("$.allies[0].name"));
     }
 }

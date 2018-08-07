@@ -2,7 +2,7 @@ package com.operatornew.superhero.controller;
 
 import com.operatornew.superhero.model.Skill;
 import com.operatornew.superhero.model.Superhero;
-import com.operatornew.superhero.repository.SuperheroRepository;
+import com.operatornew.superhero.service.SuperheroService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +43,7 @@ public class SuperheroControllerTest {
     private HttpMessageConverter jsonMessageConverter;
 
     @MockBean
-    private SuperheroRepository superheroRepository;
+    private SuperheroService superheroRepository;
 
     @Autowired
     void setConverters(HttpMessageConverter<?>[] converters) {

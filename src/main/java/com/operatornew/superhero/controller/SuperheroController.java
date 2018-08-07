@@ -2,7 +2,7 @@ package com.operatornew.superhero.controller;
 
 import com.operatornew.superhero.model.Ally;
 import com.operatornew.superhero.model.Superhero;
-import com.operatornew.superhero.repository.SuperheroRepository;
+import com.operatornew.superhero.service.SuperheroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,10 +21,10 @@ import java.net.URI;
 public class SuperheroController {
 
     @Autowired
-    SuperheroRepository superheroRepository;
+    SuperheroService superheroService;
 
-    public SuperheroController(SuperheroRepository superheroRepository) {
-        this.superheroRepository = superheroRepository;
+    public SuperheroController(SuperheroService superheroService) {
+        this.superheroService = superheroService;
     }
 
     @RequestMapping(value = "/{pseudonym}", method = RequestMethod.GET)
@@ -33,7 +33,7 @@ public class SuperheroController {
         HttpHeaders headers = new HttpHeaders();
         headers.add (HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
-        Superhero superhero = superheroRepository.findByPseudonym(pseudonym);
+        Superhero superhero = superheroService.findByPseudonym(pseudonym);
         if (superhero != null) {
             return new ResponseEntity<>(superhero, headers, HttpStatus.OK);
         } else {
@@ -45,14 +45,14 @@ public class SuperheroController {
     @ResponseBody
     public ResponseEntity<Iterable<Superhero>> getAll() {
         HttpHeaders headers = new HttpHeaders();
-        Iterable<Superhero> all = superheroRepository.findAll();
+        Iterable<Superhero> all = superheroService.findAll();
 
         return new ResponseEntity<>(all, headers, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Superhero> post(@Valid @RequestBody Superhero superhero) throws EntityExistsException {
-        Superhero saved = superheroRepository.save(superhero);
+        Superhero saved = superheroService.save(superhero);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -67,10 +67,7 @@ public class SuperheroController {
     @RequestMapping(value = "/{pseudonym}/allies", method = RequestMethod.POST)
     public ResponseEntity<Superhero> postAlly(@PathVariable("pseudonym") String pseudonym, @RequestBody Ally ally) {
 
-        Superhero superhero = superheroRepository.findByPseudonym(pseudonym);
-        Superhero theAlly = superheroRepository.findByPseudonym(ally.getPseudonym());
-        superhero.addAlly(theAlly);
-        superheroRepository.save(superhero);
+        superheroService.addAllyToSuperhero(ally, pseudonym);
 
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(headers, HttpStatus.OK);

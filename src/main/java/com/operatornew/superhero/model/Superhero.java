@@ -15,6 +15,7 @@ import java.util.Set;
 
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(value = {"allies"}, allowGetters = true)
 public class Superhero {
 
     @Id
@@ -47,7 +48,7 @@ public class Superhero {
             joinColumns = { @JoinColumn(name = "superhero_id") },
             inverseJoinColumns = { @JoinColumn(name = "ally_id") }
     )
-    @JsonIgnore
+    @JsonBackReference
     private Set<Superhero> allies = new HashSet<>();
 
     public Superhero() {}

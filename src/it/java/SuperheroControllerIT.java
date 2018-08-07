@@ -41,6 +41,7 @@ public class SuperheroControllerIT {
         assertThat(body, hasJsonPath("$.name"));
         assertThat(body, hasJsonPath("$.pseudonym"));
         assertThat(body, hasJsonPath("$.skills[0].skill"));
+        assertThat(body, hasJsonPath("$.allies[0].pseudonym"));
     }
 
 
