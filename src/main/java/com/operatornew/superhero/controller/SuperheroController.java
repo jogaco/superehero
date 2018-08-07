@@ -9,6 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.persistence.EntityExistsException;
+import javax.validation.Valid;
+import java.net.URI;
 
 @Controller
 @RequestMapping(path="/superheroes")
@@ -42,6 +47,20 @@ public class SuperheroController {
         Iterable<Superhero> all = superheroRepository.findAll();
 
         return new ResponseEntity<>(all, headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Superhero> post(@Valid @RequestBody Superhero superhero) throws EntityExistsException {
+        Superhero saved = superheroRepository.save(superhero);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{pseudonym}")
+                .buildAndExpand(saved.getPseudonym())
+                .toUri();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.LOCATION, location.toString());
+        return new ResponseEntity<>(saved, headers, HttpStatus.CREATED);
     }
 
 }
