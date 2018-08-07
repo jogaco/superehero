@@ -63,6 +63,18 @@ public class SuperheroControllerIT {
         assertThat(body, hasJsonPath("$.skills[0].skill"));
     }
 
+    @Test
+    public void postAlly() {
+        String requestJson = "{\"pseudonym\":\"spiderman\"}";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/superheroes/spiderman/allies"),HttpMethod.POST, entity, String.class);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+    }
+
     private String createURLWithPort(String url) {
         return "http://localhost:" + port + url;
     }

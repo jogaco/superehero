@@ -2,11 +2,13 @@ package com.operatornew.superhero.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
 public class Skill {
     @Id
+    @NotBlank
     private String skill;
 
     public Skill() {

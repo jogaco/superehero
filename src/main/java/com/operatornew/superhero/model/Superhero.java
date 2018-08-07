@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
@@ -17,9 +18,11 @@ import java.util.Set;
 public class Superhero {
 
     @Id
+    @NotBlank
     private String pseudonym;
 
     @Column
+    @NotBlank
     private String name;
 
     @Column
@@ -37,6 +40,15 @@ public class Superhero {
             inverseJoinColumns = { @JoinColumn(name = "skill_id") }
     )
     private Set<Skill> skills = new HashSet<>();
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "superhero_allies",
+            joinColumns = { @JoinColumn(name = "superhero_id") },
+            inverseJoinColumns = { @JoinColumn(name = "ally_id") }
+    )
+    @JsonIgnore
+    private Set<Superhero> allies = new HashSet<>();
 
     public Superhero() {}
 
@@ -87,6 +99,18 @@ public class Superhero {
 
     public void addSkill(Skill skill) {
         skills.add(skill);
+    }
+
+    public Set<Superhero> getAllies() {
+        return allies;
+    }
+
+    public void setAllies(Set<Superhero> allies) {
+        this.allies = allies;
+    }
+
+    public void addAlly(Superhero ally) {
+        allies.add(ally);
     }
 
     @Override
