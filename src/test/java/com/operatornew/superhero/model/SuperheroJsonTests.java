@@ -24,10 +24,14 @@ public class SuperheroJsonTests {
     public void testSerialize() throws Exception {
         Superhero superhero = new Superhero("name", "pseudonym");
         superhero.setFirstPublished(LocalDate.of(2018,8,7));
+        superhero.setPublisher("publisher");
+        superhero.addSkill(new Skill("skill1"));
 
         String json = jsonTester.write(superhero).getJson();
         assertThat(json, hasJsonPath("$.name", equalTo("name")));
         assertThat(json, hasJsonPath("$.pseudonym", equalTo("pseudonym")));
+        assertThat(json, hasJsonPath("$.publisher", equalTo("publisher")));
         assertThat(json, hasJsonPath("$.firstPublished", equalTo("2018-08-07")));
+        assertThat(json, hasJsonPath("$.skills[0].skill", equalTo("skill1")));
     }
 }

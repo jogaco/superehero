@@ -1,5 +1,6 @@
 package com.operatornew.superhero.controller;
 
+import com.operatornew.superhero.model.Skill;
 import com.operatornew.superhero.model.Superhero;
 import com.operatornew.superhero.repository.SuperheroRepository;
 import org.junit.Before;
@@ -97,6 +98,8 @@ public class SuperheroControllerTest {
     @Test
     public void post() throws Exception {
         Superhero superhero = new Superhero("name", "pseudonym");
+        Skill skill = new Skill("skill1");
+        superhero.addSkill(skill);
         when(superheroRepository.save(superhero)).thenReturn(superhero);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -108,7 +111,8 @@ public class SuperheroControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.name", is(superhero.getName())))
-                .andExpect(jsonPath("$.pseudonym", is(superhero.getPseudonym())));
+                .andExpect(jsonPath("$.pseudonym", is(superhero.getPseudonym())))
+                .andExpect(jsonPath("$.skills[0].skill", is(skill.getSkill())));
     }
 
     private String json(Object o) throws IOException {

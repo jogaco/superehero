@@ -1,17 +1,19 @@
 package com.operatornew.superhero.model;
 
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Superhero {
 
     @Id
@@ -21,9 +23,20 @@ public class Superhero {
     private String name;
 
     @Column
+    private String publisher;
+
+    @Column
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate firstPublished;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "superhero_skills",
+            joinColumns = { @JoinColumn(name = "superhero_id") },
+            inverseJoinColumns = { @JoinColumn(name = "skill_id") }
+    )
+    private Set<Skill> skills = new HashSet<>();
 
     public Superhero() {}
 
@@ -48,12 +61,32 @@ public class Superhero {
         this.name = name;
     }
 
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
     public LocalDate getFirstPublished() {
         return firstPublished;
     }
 
     public void setFirstPublished(LocalDate firstPublished) {
         this.firstPublished = firstPublished;
+    }
+
+    public Set<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(Set<Skill> skills) {
+        this.skills = skills;
+    }
+
+    public void addSkill(Skill skill) {
+        skills.add(skill);
     }
 
     @Override
