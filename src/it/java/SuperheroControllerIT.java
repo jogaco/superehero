@@ -16,7 +16,6 @@ import static org.hamcrest.Matchers.is;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = SuperheroApplication.class)
-//@ActiveProfiles("test")
 @Sql({ "classpath:remove-data.sql", "classpath:data.sql.test" })
 public class SuperheroControllerIT {
     @Autowired
@@ -66,14 +65,22 @@ public class SuperheroControllerIT {
 
     @Test
     public void postAlly() {
-        String requestJson = "{\"pseudonym\":\"spiderman\"}";
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/superheroes/spiderman/allies"),HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/superheroes/spiderman/allies/spiderman"),HttpMethod.POST, entity, String.class);
 
-        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getStatusCode(), is(HttpStatus.NO_CONTENT));
+    }
+
+    @Test
+    public void postAllyNotFound() {
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/superheroes/spiderman/allies/unexistent"),HttpMethod.POST, entity, String.class);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.UNPROCESSABLE_ENTITY));
     }
 
     private String createURLWithPort(String url) {

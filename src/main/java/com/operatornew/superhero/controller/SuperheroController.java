@@ -1,6 +1,5 @@
 package com.operatornew.superhero.controller;
 
-import com.operatornew.superhero.model.Ally;
 import com.operatornew.superhero.model.Superhero;
 import com.operatornew.superhero.service.SuperheroService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,13 +63,12 @@ public class SuperheroController {
         return new ResponseEntity<>(saved, headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/{pseudonym}/allies", method = RequestMethod.POST)
-    public ResponseEntity<Superhero> postAlly(@PathVariable("pseudonym") String pseudonym, @RequestBody Ally ally) {
+    @RequestMapping(value = "/{pseudonym}/allies/{ally}", method = RequestMethod.POST)
+    public ResponseEntity<Superhero> postAlly(@PathVariable("pseudonym") String superhero, @PathVariable("ally") String ally) {
 
-        superheroService.addAllyToSuperhero(ally, pseudonym);
+        superheroService.addAllyToSuperhero(superhero, ally);
 
         HttpHeaders headers = new HttpHeaders();
-        return new ResponseEntity<>(headers, HttpStatus.OK);
+        return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
     }
-
 }

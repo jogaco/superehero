@@ -2,6 +2,8 @@ package com.operatornew.superhero.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
@@ -24,6 +26,14 @@ public class Skill {
 
     public void setSkill(String skill) {
         this.skill = skill;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void prepare() {
+        if (skill != null) {
+            skill = skill.toLowerCase();
+        }
     }
 
     @Override

@@ -114,6 +114,18 @@ public class Superhero {
         allies.add(ally);
     }
 
+    public boolean isAlly(Superhero superhero) {
+        return allies.contains(superhero);
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void prepare() {
+        if (pseudonym != null) {
+            pseudonym = pseudonym.toLowerCase();
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

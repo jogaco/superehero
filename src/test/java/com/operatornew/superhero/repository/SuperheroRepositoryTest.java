@@ -34,5 +34,7 @@ public class SuperheroRepositoryTest {
         Superhero found = superheroRepository.findByPseudonym(superhero.getPseudonym());
 
         assertThat(found.getName(), is(superhero.getName()));
+        assertThat(found.getPseudonym(), is("batman"));
     }
+
 }
